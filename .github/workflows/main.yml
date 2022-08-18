@@ -1,0 +1,27 @@
+name: issue-mover-main
+
+on:
+  issues:
+    types: 
+      - opened
+
+jobs:
+  dev-tasks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@main
+        with:
+          project-url: https://github.com/users/alexzbusko/projects/1
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          labeled: dev-task
+          # label-operator: OR
+  
+  other-tasks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@main
+        with:
+          project-url: https://github.com/users/alexzbusko/projects/2/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          labeled: dev-task
+          label-operator: NOT
