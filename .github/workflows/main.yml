@@ -2,26 +2,70 @@ name: issue-mover-main
 
 on:
   issues:
-    types: 
-      - opened
+    types: [opened, reopened]
+
+# jobs:
+#   dev-tasks:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/add-to-project@main
+#         with:
+#           project-url: https://github.com/users/alexzbusko/projects/1
+#           github-token: ${{ secrets.TOKEN_FOR_PROJECT_ISSUES }}
+#           labeled: bug
+#           # label-operator: OR
+  
+#   other-tasks:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/add-to-project@main
+#         with:
+#           project-url: https://github.com/users/alexzbusko/projects/2/
+#           github-token: ${{ secrets.TOKEN_FOR_PROJECT_ISSUES }}
+#           labeled: bug
+#           label-operator: NOT
+
+
+# name: Auto Assign to Project(s)
+
+# on:
+#   issues:
+#     types: [opened, labeled]
+#   pull_request:
+#     types: [opened, labeled]
+#   issue_comment:
+#     types: [created]
+env:
+  GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_PROJECT_ISSUES }}
 
 jobs:
-  dev-tasks:
+  assign_taqueria_project:
     runs-on: ubuntu-latest
+    name: Assign to Taqueria Dev Project
     steps:
-      - uses: actions/add-to-project@main
-        with:
-          project-url: https://github.com/users/alexzbusko/projects/1
-          github-token: ${{ secrets.TOKEN_FOR_PROJECT_ISSUES }}
-          labeled: bug
-          # label-operator: OR
+    - name: Assign NEW issues to Taqueria Dev
+      uses: srggrs/assign-one-project-github-action@1.3.1
+      if: github.event.action == ('opened' || 'reopened') && github.event.issue.labels.*.name =='bug'
+      with:
+        project: 'https://github.com/users/alexzbusko/projects/1'
+        column_name: 'Eng Backlog'
   
-  other-tasks:
+  assign_triage_project:
     runs-on: ubuntu-latest
+    name: Assign to Triage Project
     steps:
-      - uses: actions/add-to-project@main
-        with:
-          project-url: https://github.com/users/alexzbusko/projects/2/
-          github-token: ${{ secrets.TOKEN_FOR_PROJECT_ISSUES }}
-          labeled: bug
-          label-operator: NOT
+    - name: Assign NEW issues and NEW pull requests to Taqueria Dev
+      uses: srggrs/assign-one-project-github-action@1.3.1
+      if: github.event.action == 'opened' && !github.event.issue.labels.*.name =='bug'
+      with:
+        project: 'https://github.com/users/alexzbusko/projects/2'
+        column_name: 'Inbox'
+
+    # - name: Assign issues and pull requests with `bug` label to project 3
+    #   uses: srggrs/assign-one-project-github-action@1.3.1
+    #   if: |
+    #     contains(github.event.issue.labels.*.name, 'bug') ||
+    #     contains(github.event.pull_request.labels.*.name, 'bug')
+    #   with:
+    #     project: 'https://github.com/srggrs/assign-one-project-github-action/projects/3'
+    #     column_name: 'Labeled'
