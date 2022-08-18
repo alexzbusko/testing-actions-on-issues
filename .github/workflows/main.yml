@@ -12,7 +12,7 @@ jobs:
       - uses: actions/add-to-project@main
         with:
           project-url: https://github.com/users/alexzbusko/projects/1
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.TOKEN_FOR_PROJECT_ISSUES }}
           labeled: bug
           # label-operator: OR
   
@@ -22,6 +22,6 @@ jobs:
       - uses: actions/add-to-project@main
         with:
           project-url: https://github.com/users/alexzbusko/projects/2/
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.TOKEN_FOR_PROJECT_ISSUES }}
           labeled: bug
           label-operator: NOT
